@@ -52,14 +52,18 @@ public class Student {
 	@Column(nullable = false, length=25)//@Column:kullandigimiz field'lerin tabloda bir column'a denk gelmesini istiyorsam
 	//nullable kullanıcı name'e illa bir seyler girsin diye, lenth de en fazla girecegi karakter
 	private String name;
+	
 	@Column(nullable = false, length=25)
 	private String lastName;
+	
 	@Column
 	private Integer grade;
+	
 	@Column(nullable = false, length=50, unique = true) //unique olmasi ayni email'lerin girilmesini onlemek
 	@Email(message = "Provide valid email") //email'in belli ozelliklerde olmasini istiyorsam ve 
 											//yanlis degerde email girerse bir mesaj vermek icin
 	private String email;
+	
 	@Column
 	private String phoneNumber;
 	
