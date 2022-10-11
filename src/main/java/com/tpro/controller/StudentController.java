@@ -83,27 +83,38 @@ public class StudentController {
 	
 	//Get a Student by ID by RequestParam
 	@GetMapping("/query") //localhost:8080/students/1 benim istedigim id'yi endpoint'den cagirmak istersem
+	//endpoint'imde bir id ile @GetMapping geliyor, endpoint'inde gorunen yazdigimiz id ile database'e gidip,
+	//Student'i bulup on tarafa gonderiyoruz
+	
 	public ResponseEntity<Student> getStudent(@RequestParam("id") Long id){
+		//(^)getStudent method'unun @RequestParam ile gelecegini soyluyorum
+		//@RequestParam:@GetMapping("/query") ile @RequestParam("id")'daki id'yi map'ler
+		//(^)benim aldigim query'yi POJO class'indaki Long data turundeki id'ye map'liyoruz(set ediyoruz)
+		//birden fazla deger alacaksam @RequestParam kullanirim(postman'de aralarinda & kullanarak)
+		
 		Student student =studentService.findStudent(id); //burda student data turunde student isminde doner
-		return ResponseEntity.ok(student);
+		//(^)gelen id'yi studentService kismina refer ederek ordan method'u cagriyoruz
+		//bu method(findStudent); bu id varsa eger Student data turundeki student degiskenine atayacak
+		
+		return ResponseEntity.ok(student);//istedigi id'yi ResponseEntity'e gonderiyorum
 		
 	}
 	
 	//Get a Student by ID by PathVariable(tek bir sey istedigimde PathVariable kullanirim)
-	//Postman üzerinde sorgulama yapılırken @PathVariable ile birden fazla değer alınabilir.
-	//DB üzerinden bir tane veri çekmek isteniyorsa @PathVariable kullanılır.
-	//@PathVariable ile bilgi çekerken verilerin metodtaki (kayıt) sırası (id, ad, soyad, yaş vb.) önemlidir.
-	//Örneğin; ".../query?id=3&ad=ahmet&soyad=demir&yaş=23" gibi.
+	//Postman uzerinde sorgulama yapilirken @PathVariable ile birden fazla deger alinabilir.
+	//DB uzerinden bir tane veri cekmek isteniyorsa @PathVariable kullanilir.
+	
 	@GetMapping("/{id}")
-	public ResponseEntity<Student> getStudentWithPath(@PathVariable("id") Long id){
+	public ResponseEntity<Student> getStudentWithPath(@PathVariable("id") Long id){//calisma prensibi param gibi
+	
 		Student student =studentService.findStudent(id); 
 		return ResponseEntity.ok(student);
 	}
 	
 	//Delete Student
-	@DeleteMapping("{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<Map<String, String>> deleteStudent(@PathVariable("id") Long id){
-		studentService.deleteStudent(id);
+		studentService.deleteStudent(id); //service class'ina gonderiyorum
 		Map<String, String> map =new HashMap<>();
 		map.put("message","Student is deleted succesfuly");
 		map.put("status","true"); //test olarak duzgun olarak olustu demek(kullaniciya mesaj)
@@ -111,28 +122,63 @@ public class StudentController {
 	}
 	
 	//Update Student, DTO kulllanilacak
-	@PutMapping("{id}") //  localhost:8080/students/1
+	@PutMapping("{id}") //  localhost:8082/students/1
 	public ResponseEntity<Map<String, String>> updateStudent(@PathVariable("id") Long id, @RequestBody StudentDTO studentDTO){
-		studentService.updateStudent(id,studentDTO);
+												//@RequestBody StudentDTO studentDTO:JSON datalari eklemek icin
+		
+		studentService.updateStudent(id,studentDTO); //service'e gonderiyoruz
 		Map<String, String> map =new HashMap<>();
 		map.put("message","Student is updated succesfuly");
 		map.put("status","true"); 
 		return new ResponseEntity<>(map,HttpStatus.OK);
 	}
 	
-	//pageable
+	//pageable(dataları parcalara ayirmak icin)
 	@GetMapping("/page")
-	public ResponseEntity<Page<Student>> getAllWithPage(@RequestParam("page")int page,
-														@RequestParam("size")int size,
-														@RequestParam("sort")String prop,
-														@RequestParam("direction")Direction direction
+	//Asagidaki talep frondend tarafindan gelecek
+	public ResponseEntity<Page<Student>> getAllWithPage(@RequestParam("page")int page,//kac sayfa
+														@RequestParam("size")int size,//her sayfada kac tane
+														@RequestParam("sort")String prop,//siralama(alfabe)
+														@RequestParam("direction")Direction direction//dogal siralama
 														){
 		Pageable pageable=PageRequest.of(page,size,Sort.by(direction,prop));
 		Page<Student>studentPage=studentService.getAllWithPage(pageable);
+		//studentService katmanindan getAllWithPage method'unu cagriyorum, icerisine arguman olarak
+//yukarida olusturdugum pageable objesini atiyorum, pageable icerisinde yukarda olusturdugum kisitlamalar var
+		//Bu ozelliklerle studentService katmanindan bir sey istiyorsam buna karsilik olarak POJO class'i
+		//student oldugu icin student'tan gelecek ama list formatinda gelmemesi lazim cunku pageabla atiyorum
+		//Dolayisiyla donen yapi Page generic yapisinda icerisinde Student olan objelerin oldugu yapi gelecek
+		
+		//Client side:on taraf, frontend-->
+		//Server side:backend arka taraf(controller, servis..)
+
 		return ResponseEntity.ok(studentPage);
 		
 	}
 	
+	//ayni endpoint'e farkli get put ile gidebilirim ama ikiside get ise farkli endpoint vermek daha mantikli
+	
+	//Get By LastName
+	@GetMapping("/querylastname") // student/querylastname..
+	public ResponseEntity<List<Student>> getStudentByLastName(@RequestParam("lastName")String lastName){ 
+		//ayni soyisimden cok fazla olmaz diye page yapmadik,list yaptik
+		List<Student> list=studentService.findStudent(lastName);
+		return ResponseEntity.ok(list);
+	}
+	
+	//GetAllstudentsBygrade(JPQL)
+	@GetMapping("/grade/{grade}")
+	public ResponseEntity<List<Student>>getStudentsEqualsGrade(@PathVariable("grade")Integer grade){
+		List<Student>list=studentService.findAllEqualsGrade(grade);
+		return ResponseEntity.ok(list);
+	}
+	
+	//DB'den direk DTO olarak datami alsam?
+	@GetMapping("/query/dto")
+	public ResponseEntity<StudentDTO> getStudentDTO(@RequestParam("id")Long id){
+		StudentDTO studentDTO=studentService.findStudentDTOById(id);
+		return ResponseEntity.ok(studentDTO);
+	}
 	
 	
 	

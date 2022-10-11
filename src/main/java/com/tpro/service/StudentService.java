@@ -31,6 +31,7 @@ public class StudentService {
 		//orda olan butun Student listesini cagriyor
 	}
 
+	//create student
 	public void createStudent(Student student) {
 		if (studentRepository.existsByEmail(student.getEmail())) {
 			//kullanicinin girdigi email bilgisi benim database'imde var mi diye kontrol etmem lazim
@@ -40,12 +41,17 @@ public class StudentService {
 			//burda(^) ConflictException class'indaki message yerine gidecek olan mesaj
 			
 		}
-		studentRepository.save(student);
+		studentRepository.save(student); //repository'e gonderiyorum(save method'u JPA'dan geldi)
 	}
 	//find Student By ID
 	public Student findStudent(Long id) {//bu method optional'dir senin bunu mutlaka handle etmen lazim
+		//istedigi id database'de var mi?varsa gonderecek yoksa exception firlatir
 		return studentRepository.findById(id).
 				orElseThrow(()->new ResourceNotFoundException("Student not found with id : "+id)); 
+	//orElseThrow:boyle bir id yoksa exception firlat
+		
+//(^)studentRepository'ne git, findById method'unu cagir, (id) ile tarama yap, varsa dondur(return) yoksa
+//orElseThrow'a git exception'i firlat mesaji gonder
 	}
 
 	public void deleteStudent(Long id) {
@@ -55,26 +61,55 @@ public class StudentService {
 
 	//update student
 	public void updateStudent(Long id, StudentDTO studentDTO) {
+		//once kullanicinin girdigi email DB'de var mi yok mu ona bakariz
 		boolean emailExist=studentRepository.existsByEmail(studentDTO.getEmail()); 
 		//(^)bu bilginin false olmasi benim database'imde bu email'in olmadigini gosterir
-		Student student=findStudent(id); //anlik olarak giris yapan kullanici bilgilerini Student objesine set ediyorum
+		
+		Student student=findStudent(id); 
+		//(^)anlik olarak giris yapan kullanici bilgilerini Student objesine set ediyorum
+		//bu method student obj donduruyor, bu dondurdugu obje sisteme giris yapan ve guncelleme yapmak isteyen
+		//kullanicinin DB'deki gercek bilgilerini getirecek
+		
+		
 		//email exist mi? ve anlik olarak gelen kullaniciya mi ait bunun kontrolu
 		if (emailExist && !studentDTO.getEmail().equals(student.getEmail())) {
-			//??ilk kısım:yeni email data'da var mi ve ikinci kisim: baskasinin emailini girerse(not true) exception firlatir
+			//kendi email'ini update edebilir sadece baskasina ait email olmamali
+			//ilk kısım:yeni email data'da var mi(baskasinin emailini girerse)
+			//ikinci kisim: kendi emailini girerse'nin 	kontrolu
+			//1:yeni email DB'de var mi? 2:yeni diye girdigi email eski girdigi email mi
 			throw new ConflictException("Email is already exist");
 		}
 		
+		//burda DTO uzerinden gelen guncel bilgileri DB uzerine yaziyoruz
 		student.setName(studentDTO.getFirstName());
 		student.setLastName(studentDTO.getLastName());
 		student.setGrade(studentDTO.getGrade());
 		student.setEmail(studentDTO.getEmail());
 		student.setPhoneNumber(studentDTO.getPhoneNumber());
 		
-		studentRepository.save(student);
+		studentRepository.save(student); //bilgileri Repository'e kaydedip DB'e gonderiyoruz
 	}
+
 
 	public Page<Student> getAllWithPage(Pageable pageable) {
 		return studentRepository.findAll(pageable);
+		
+	}
+
+	public List<Student> findStudent(String lastName) {
+		
+		return studentRepository.findByLastName(lastName); //direk repo'ya gonderiyorum cunku hazir method kullaniyorum
+	}
+
+	public List<Student> findAllEqualsGrade(Integer grade) {
+		
+		return studentRepository.findAllEqualsGrade(grade);
+	}
+
+	public StudentDTO findStudentDTOById(Long id) {
+		return studentRepository.
+				findStudentDTOById(id).
+				orElseThrow(()-> new ResourceNotFoundException("Student not found with id: " + id));
 		
 	}
 	

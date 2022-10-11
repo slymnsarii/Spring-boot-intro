@@ -43,8 +43,9 @@ public class StudentDTO {
 	private LocalDateTime createDate = LocalDateTime.now();
 	
 	public StudentDTO(Student student) { //Constructor-->obje dondurur
-		this.id=student.getId();
-		this.firstName=student.getName();
+		//(^)amacim database'den controller tarafina bir sey gidecekse, POJO class'im bunu DTO'ya ceviriyor
+		this.id=student.getId(); //olusacak olan studentDTO'nun id'si, POJO class'in id'sine denk gelsin
+		this.firstName=student.getName(); //this.firstName(studentDTO)=student.getName(POJO id)
 		this.lastName=student.getLastName();
 		this.grade=student.getGrade();
 		this.email=student.getEmail();
