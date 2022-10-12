@@ -20,7 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StudentDTO {
-	
+	//DTO kullanma sebebim; 1)hız 2)guvenlik(id, email vs kullanicinin degistirmemesi icin)
 	
 	private Long id; 
 	
@@ -42,7 +42,9 @@ public class StudentDTO {
 	
 	private LocalDateTime createDate = LocalDateTime.now();
 	
-	public StudentDTO(Student student) { //Constructor-->obje dondurur
+	public StudentDTO(Student student) { //Constructor(parametreli)-->obje dondurur
+		//(^)StudentDTO constructor'ina Student parametresi girersek otomatik map'liyor
+ //StudentDTO donecek ama parametre olarak POJO'daki student parametresini gonderiyoruz ve icerde onu map'liyoruz
 		//(^)amacim database'den controller tarafina bir sey gidecekse, POJO class'im bunu DTO'ya ceviriyor
 		this.id=student.getId(); //olusacak olan studentDTO'nun id'si, POJO class'in id'sine denk gelsin
 		this.firstName=student.getName(); //this.firstName(studentDTO)=student.getName(POJO id)
@@ -53,4 +55,19 @@ public class StudentDTO {
 		this.createDate=student.getCreateDate();
 		
 	}
+	
+	/*
+	 public StudentDTO(
+            @NotNull(message = "first name can not be null") @NotBlank(message = "last name can not be white space") @Size(min = 2, max = 25, message = "First name '${validatedValue}' must be between {min} and {max} long") String name,
+            String lastName, Integer grade, @Email(message = "Provide valid email") String email, String phoneNumber) {
+
+        this.firstName = name;
+        this.lastName = lastName;
+        this.grade = grade;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
+    
+    Controller'da en altta
+	 */
 }

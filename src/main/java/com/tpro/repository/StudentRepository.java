@@ -23,20 +23,33 @@ public interface StudentRepository extends JpaRepository<Student, Long>{
 	//Spring Data JPA icinde existById() var fakat Spring Data JPA bize sondaki eki istedigimiz degisken ismi ile
 	//degistirmemize izin veriyor(ByEmail, ByGreade..), mevcut method'u bu sekilde turetebiliyoruz.
 
-	List<Student> findByLastName(String lastName);
+	List<Student> findByLastName(String lastName);//findBy turetilebilir bir method oldugu icin arka planda 
+	//parametre olan argument olarak ekledigim lastName'i aliyor DB'den gidip ordan alip getiriyor
 
-	//JPQL ile yazalim:
+	//JPQL ile yazalim:	
 	@Query("SELECT s from Student s WHERE s.grade=:pGrade") 
-	//(^)kendi query'imi yaziyorum //pGrade alttaki (@Param("pGrade")Integer grade)'den alıyor
-	List<Student> findAllEqualsGrade(@Param("pGrade")Integer grade);
+	//(^)kendi query'imi yaziyorum //pGrade alttaki (@Param("pGrade")Integer grade)'deki grade'den aliyor
+	//pGrade'i asagidaki grade'e map'lemek icin @Param("pGrade) ekliyorum(=: bi yerden variable alacagim demek)
+  //yani Integer grade'deki grade, @Param("pGrade")'daki PGrade'e, PGrade'de  Query icindeki =:pGrade'e gomuyor
+	//yani sunu yapmis oluyorum--> pGrade=grade
 	
+	List<Student> findAllEqualsGrade(@Param("pGrade")Integer grade);
 	
 	//Native Query(SQL)
 		@Query(value="SELECT * from Student s WHERE s.grade=:pGrade", nativeQuery=true)
 		List<Student> findAllEqualsGradeWithSQL(@Param("pGrade")Integer grade);
-	//JPQL
+		
+		
+	//JPQL ile:
 		@Query("SELECT new com.tpro.dto.StudentDTO(s) FROM Student s WHERE s.id=:id")
-		Optional<StudentDTO> findStudentDTOById(@Param("id")Long id); //Optional: ya gelmezse orElseThrow'dan dolayi
+		//(^)burda StudentDTO'da yaptigim map'leme isini JPQL ile burda yapiyorum
+		//StudentDTO(s)'deki (s) Student'in as edilmis hali yani oraya Stuednt'i gomuyorum
+		Optional<StudentDTO> findStudentDTOById(@Param("id")Long id); 
+	//(^)Eger repo'dan gelen student'i DTO'ya cevirmek istersem indStudentDTOById method'unu her yerde kullanirim
+		//Optional: ya gelmezse ya olmazsa anlaminda orElseThrow'dan dolayi	
+	
+		
+		
 }
 
 	

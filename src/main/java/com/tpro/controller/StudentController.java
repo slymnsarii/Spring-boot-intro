@@ -1,9 +1,13 @@
 package com.tpro.controller;
 
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +33,8 @@ import com.tpro.service.StudentService;
 @RestController //proje RestFullAPI(Rest mimari ile uretildigi icin) oldugu icin
 @RequestMapping("/students") //gelen requestleri "/students" ile maple
 public class StudentController {
+	
+	Logger logger = LoggerFactory.getLogger(StudentController.class); //LoggerFactory:logger ureten fabrika
 
 	@Autowired //suanda StudentService turunde studentService adinda bir obje bean olarak 
 	//olusturulmaya aday olarak IOC containerinda duruyor, ben bunu istedigim anda(ihtiyac duydugum anda) 
@@ -37,9 +43,18 @@ public class StudentController {
 	//StudentService data türündeki objeyi new keywordunu kullanmadan uygulama içinde kullanmamı sağlıyor)
 	private StudentService studentService;
 	
+	/*
 	@GetMapping("/welcome") //localhost:8080/students/welcome 
 							//(bana bu endpointle gelirsen bu asagidaki method'u calistir) //Get bilgi ister
 	public String welcome() {
+		return "Welcome to Student Controller";
+	}
+	*/
+	
+	@GetMapping("/welcome")
+	public String welcome(HttpServletRequest request) {
+		
+		logger.warn("-----------Welcome{}",request.getServletPath());
 		return "Welcome to Student Controller";
 	}
 	
@@ -127,7 +142,7 @@ public class StudentController {
 												//@RequestBody StudentDTO studentDTO:JSON datalari eklemek icin
 		
 		studentService.updateStudent(id,studentDTO); //service'e gonderiyoruz
-		Map<String, String> map =new HashMap<>();
+		Map<String, String> map =new HashMap<>();//bu map satirlari on tarafa mesaj gondermek icin
 		map.put("message","Student is updated succesfuly");
 		map.put("status","true"); 
 		return new ResponseEntity<>(map,HttpStatus.OK);
@@ -136,7 +151,7 @@ public class StudentController {
 	//pageable(dataları parcalara ayirmak icin)
 	@GetMapping("/page")
 	//Asagidaki talep frondend tarafindan gelecek
-	public ResponseEntity<Page<Student>> getAllWithPage(@RequestParam("page")int page,//kac sayfa
+	public ResponseEntity<Page<Student>> getAllWithPage(@RequestParam("page")int page,//kac sayfa(hangi sayfa)
 														@RequestParam("size")int size,//her sayfada kac tane
 														@RequestParam("sort")String prop,//siralama(alfabe)
 														@RequestParam("direction")Direction direction//dogal siralama
@@ -149,26 +164,32 @@ public class StudentController {
 		//student oldugu icin student'tan gelecek ama list formatinda gelmemesi lazim cunku pageabla atiyorum
 		//Dolayisiyla donen yapi Page generic yapisinda icerisinde Student olan objelerin oldugu yapi gelecek
 		
-		//Client side:on taraf, frontend-->
-		//Server side:backend arka taraf(controller, servis..)
+//Client(on taraf, frontend) side pageable:Server'dan butun datalari client'e gonderme(cok mantikli degil)
+//Server(backend arka taraf(controller,servis,repo,DB..)) side pageable:binlerce data'yi page'lere bolmek backend'de
 
-		return ResponseEntity.ok(studentPage);
+		return ResponseEntity.ok(studentPage); //on tarafa da ResponseEntity'i ok diyerek 200 kodu icinde de 
+												//argument olarak studentPage gonderiyorum
 		
 	}
 	
 	//ayni endpoint'e farkli get put ile gidebilirim ama ikiside get ise farkli endpoint vermek daha mantikli
 	
 	//Get By LastName
-	@GetMapping("/querylastname") // student/querylastname..
+	@GetMapping("/querylastname") // student/querylastname //kullanici bana soyismi "kaya" olanlari getir derse
 	public ResponseEntity<List<Student>> getStudentByLastName(@RequestParam("lastName")String lastName){ 
 		//ayni soyisimden cok fazla olmaz diye page yapmadik,list yaptik
 		List<Student> list=studentService.findStudent(lastName);
+		//(^)Burda esitligin sag tarafi once yazilir cunku burda studentService'den bir method cagirmam lazim,
+		//dolayisiyla lastname'leri istedigim icin Student'lar donecek o yuzden sol tarafa liste seklinde
+		//Student'lari yaziyorum
 		return ResponseEntity.ok(list);
 	}
 	
 	//GetAllstudentsBygrade(JPQL)
-	@GetMapping("/grade/{grade}")
+	@GetMapping("/grade/{grade}") //@PathVariable dedigim icin {grade} yazdim
 	public ResponseEntity<List<Student>>getStudentsEqualsGrade(@PathVariable("grade")Integer grade){
+													//(^)burdaki grade Getmapping icindeki {grade}'den geliyor
+											  //POJO class'imdaki grade integer old. icin Integer'a mapp'liyoruz
 		List<Student>list=studentService.findAllEqualsGrade(grade);
 		return ResponseEntity.ok(list);
 	}
@@ -177,8 +198,26 @@ public class StudentController {
 	@GetMapping("/query/dto")
 	public ResponseEntity<StudentDTO> getStudentDTO(@RequestParam("id")Long id){
 		StudentDTO studentDTO=studentService.findStudentDTOById(id);
-		return ResponseEntity.ok(studentDTO);
+   return ResponseEntity.ok(studentDTO); //parantez icinde bi ust satirda ne donmesini istiyorsam onu giriyorum
 	}
+	
+	/*
+	 
+	 //studentDTO constructorini sorgu yaparken degil getmapping icinde kullandik.Buna olanak saglayan yapi da
+      // @ResponseBody yapisidir.
+        
+      
+        @GetMapping("/rest-service/student/{id}")
+        @ResponseBody
+        public StudentDTO getStudentsWithService(@PathVariable Long id) {
+            Student student=studentService.findStudent(id);
+            StudentDTO studentDTO=new StudentDTO(student.getName(),student.getLastName(),student.getGrade(),
+                    student.getPhoneNumber(),student.getEmail());
+            return studentDTO;
+        }
+	 
+	 DTO'da devami
+	 */
 	
 	
 	

@@ -81,7 +81,7 @@ public class StudentService {
 		}
 		
 		//burda DTO uzerinden gelen guncel bilgileri DB uzerine yaziyoruz
-		student.setName(studentDTO.getFirstName());
+		student.setName(studentDTO.getFirstName());//ben burda setId yapmadigim icin id'yi degistiremez kullanici
 		student.setLastName(studentDTO.getLastName());
 		student.setGrade(studentDTO.getGrade());
 		student.setEmail(studentDTO.getEmail());
@@ -98,7 +98,9 @@ public class StudentService {
 
 	public List<Student> findStudent(String lastName) {
 		
-		return studentRepository.findByLastName(lastName); //direk repo'ya gonderiyorum cunku hazir method kullaniyorum
+		return studentRepository.findByLastName(lastName); 
+		//direk repo'ya gonderiyorum cunku hazir method kullaniyorum, parametre olarak (String lastName)'deki
+		//parametreyi gonderiyorum
 	}
 
 	public List<Student> findAllEqualsGrade(Integer grade) {
@@ -107,9 +109,14 @@ public class StudentService {
 	}
 
 	public StudentDTO findStudentDTOById(Long id) {
+		//bana id geldi, ben DB method'larini kullanirsam bana Student POJO class'i gelecek,
+		//benim bunu studentDTO'ya cevirmem lazim
 		return studentRepository.
 				findStudentDTOById(id).
-				orElseThrow(()-> new ResourceNotFoundException("Student not found with id: " + id));
+				orElseThrow(()-> new ResourceNotFoundException("Student not found with id: " + id)); 
+					//burda kullanicinin girdigi id'yi buraya gonderiyorum +id ekleyerek
+					//burdaki +id, istersem id'yi gosteririm istemezsem gostermem(yazmazsam +id'yi)
+		//benden id istiyor ama id yoksa orElseThrow'u kullaniyorum	
 		
 	}
 	
