@@ -43,9 +43,9 @@ public interface StudentRepository extends JpaRepository<Student, Long>{
 	//JPQL ile:
 		@Query("SELECT new com.tpro.dto.StudentDTO(s) FROM Student s WHERE s.id=:id")
 		//(^)burda StudentDTO'da yaptigim map'leme isini JPQL ile burda yapiyorum
-		//StudentDTO(s)'deki (s) Student'in as edilmis hali yani oraya Stuednt'i gomuyorum
+		//StudentDTO(s)'deki (s) Student'in as edilmis hali yani oraya Student'i gomuyorum
 		Optional<StudentDTO> findStudentDTOById(@Param("id")Long id); 
-	//(^)Eger repo'dan gelen student'i DTO'ya cevirmek istersem indStudentDTOById method'unu her yerde kullanirim
+	//(^)Eger repo'dan gelen student'i DTO'ya cevirmek istersem findStudentDTOById method'unu her yerde kullanirim
 		//Optional: ya gelmezse ya olmazsa anlaminda orElseThrow'dan dolayi	
 	
 		

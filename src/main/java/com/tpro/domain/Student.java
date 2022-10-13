@@ -74,11 +74,12 @@ public class Student {
 	private String phoneNumber;
 	
 	@JsonFormat(shape= JsonFormat.Shape.STRING, pattern="MM/dd/yyyy HH:mm:ss", timezone="Turkey")
-	//(^)JSON formatinda duzgun cikti gelsin istiyorsam time'in
+	//(^)JSON formatinda duzgun cikti gelsin istiyorsam time'i
 	private LocalDateTime createDate=LocalDateTime.now(); //islemin yapidigi anda yapilmasini istersem
 	
 	@OneToMany(mappedBy = "student")
-	private List<Book>books=new ArrayList<>();
+	private List<Book>books=new ArrayList<>(); //bir student'in birden fazla kitabi olacagi icin 
+					 //collection kullaniyoruz(books isminde list data turunde bir degisken olusturuyoruz)
 	
 	
 }

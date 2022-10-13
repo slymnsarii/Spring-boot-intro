@@ -10,6 +10,10 @@ spring:
     username: root
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
+  security:
+    user:
+      name: name
+      password: password
   jpa:
    hibernate:
       ddl-auto: update
@@ -24,11 +28,11 @@ logging:
   pattern:
     file: "%d %-5level [%thread] %logger:%msg%n"
   level:
-    '[org.srtingframework.web]': WARN
+    '[org.springframework.web]': WARN
     '[org.hibernate]': INFO
     '[com.tpro]': INFO
     
-management:   #actuator
+management:   #actuator monitorleme
   endpoints:
     web:
       exposure:

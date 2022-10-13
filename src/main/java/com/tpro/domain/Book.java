@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
+@Entity //DB'de tablo ile iliskilendirmek icin
 @Setter
 @NoArgsConstructor
 public class Book {
@@ -22,15 +22,22 @@ public class Book {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@JsonProperty("bookName") //alttaki kod'da name'i degistirmiyoruz ama JSON ciktida bookName olmasini sagladik(Student'daki name ile karismasin diye)
+	@JsonProperty("bookName") //Kod kisminda name olarak kalsin ama 
+	//JSON formatinda bunun adinin bookName olmasini saglamak(Student'daki name ile karismasin diye)
+	//kodda koyacagin isim aciklayici olabilir o yuzden kisa bi isim yazip, on tarafta(JSON) isim veriyoruz
 	private String name;
 	
-	@JsonIgnore////sonsuz döngüye girmemesi için kısaca burada yeniden
+	@JsonIgnore////sonsuz döngüye girmemesi için(JSON yapiyor bunu) kısaca burada yeniden
 	//student classına gitmemesi için bu annotationu kullandık
 	//burda stackoverflow olmaması için yaptık. student-book arası gidip gelmemesi için
-	@ManyToOne
-	@JoinColumn(name="student_id") //joinColumn ici foregin key oluyordu, o yuzden id ile iliskilendiiryoruz
-	private Student student;
+	
+	
+	//bir student'in birden fazla kitabi olsun istiyorum yani many-->book, one-->student tarafinda olur
+	@ManyToOne//bir student'in birden fazla kitabi olsun istiyorsam
+	@JoinColumn(name="student_id")
+	//(^)joinColumn ici foregin key oluyordu, o yuzden diger tarafta student_id ile iliskilendiriyoruz
+	//student_id bilgisi asagidaki student'a set ediyoruz
+	private Student student; //bu class'i student objesi ile iliskilendirmek icin(maplemek,birlestirmek)
 
 	public Long getId() {
 		return id;

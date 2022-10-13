@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,7 +34,11 @@ import com.tpro.service.StudentService;
 @RestController //proje RestFullAPI(Rest mimari ile uretildigi icin) oldugu icin
 @RequestMapping("/students") //gelen requestleri "/students" ile maple
 public class StudentController {
-	
+	//kullanicinin aldigi hatayi log dosyasina gidip hangi saat'te aldigina bakip ona gore sorunu cozuyoruz
+	//logglamayi hangi method'da istiyorsam o method'un class'inda yapiyorum
+	//logglama; hata kayitlarini tutar hatanin nerden geldigini(hibernate vs.) tutar,
+	//hangi seviyede logglama yapmak istedigimizi biz belirtiyoruz
+	//(Trace, debug, info, warn, error, fatal)logglamayi info yaparsan info ve yukarisini logglar
 	Logger logger = LoggerFactory.getLogger(StudentController.class); //LoggerFactory:logger ureten fabrika
 
 	@Autowired //suanda StudentService turunde studentService adinda bir obje bean olarak 
@@ -43,23 +48,27 @@ public class StudentController {
 	//StudentService data türündeki objeyi new keywordunu kullanmadan uygulama içinde kullanmamı sağlıyor)
 	private StudentService studentService;
 	
-	/*
+	/* logger icin yoruma aldim
 	@GetMapping("/welcome") //localhost:8080/students/welcome 
 							//(bana bu endpointle gelirsen bu asagidaki method'u calistir) //Get bilgi ister
 	public String welcome() {
 		return "Welcome to Student Controller";
 	}
+	
+	logglama icin asagiya yaptim aynisini
 	*/
 	
 	@GetMapping("/welcome")
-	public String welcome(HttpServletRequest request) {
+	public String welcome(HttpServletRequest request) {//HttpServletRequest:requestlere ulasmak icin
 		
 		logger.warn("-----------Welcome{}",request.getServletPath());
 		return "Welcome to Student Controller";
 	}
-	
+	 
 	// Get All Students
 	@GetMapping //herhangi bir endpoint girmezsem yukardaki "/students" i alir(@RequestMapping'deki)
+	@PreAuthorize("hasRole('ADMIN')")
+	
 	/*
 	 Burda donen bir method girmem gerek.Bana bir request geldigi zaman client'e response olarak 
 	 https status kodunu gondermem lazim(200,300..) ve kullaniciya bir mesaj gondermem lazim(kullanicin istedigi bilgiler)
@@ -83,6 +92,7 @@ public class StudentController {
 	//Create new Student
 	@PostMapping ////herhangi bir endpoint girmezsem yukardaki "/students" i alir(@RequestMapping'deki)
 	//bir kisi "/student" endpoint'i ile get methodu'yla gelirse @GetMapping, post ile gelirse @PostMapping calisir
+	@PreAuthorize("hasRole('STUDENT')")
 	public ResponseEntity<Map<String, String>> createStudent(@Valid @RequestBody Student student){
 		//RequestBody:Bana gelen request'in body'sindeki data'yi(JSon) istiyorum demek
 		//@RequestBody Student student(@RequestBody calismasi):request'en gelen JSon'i bendeki student'a maple(ata),

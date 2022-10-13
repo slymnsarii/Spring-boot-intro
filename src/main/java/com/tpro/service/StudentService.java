@@ -73,13 +73,21 @@ public class StudentService {
 		
 		//email exist mi? ve anlik olarak gelen kullaniciya mi ait bunun kontrolu
 		if (emailExist && !studentDTO.getEmail().equals(student.getEmail())) {
+			/*slymn@gmail.com olarak girdim, DB'de var bu email artik
+			 emailExist=true-->cunku kullanici artik kayitli,
+			 student.getEmail=slymn@gmail.com-->cunku kayitli olan bu email 
+			 studentDTO.getEmail=slymnsarii@gmail.com-->forma bu maili girdim
+			 o zaman student.getEmail=studentDTO.getEmail -->true, !true=false
+			 true && false -->false gelir ve exception'a girmez {} disina cikar kod
+(forma girdigi deger mirac@gmail.com olsa, emailExist=slymn, DTO kismi false olur, !false=true olur exception firlatir
+			 */
 			//kendi email'ini update edebilir sadece baskasina ait email olmamali
 			//ilk kısım:yeni email data'da var mi(baskasinin emailini girerse)
 			//ikinci kisim: kendi emailini girerse'nin 	kontrolu
 			//1:yeni email DB'de var mi? 2:yeni diye girdigi email eski girdigi email mi
 			throw new ConflictException("Email is already exist");
 		}
-		
+		//eger if'in icinde exception firlatirsa buraya gelmez kod
 		//burda DTO uzerinden gelen guncel bilgileri DB uzerine yaziyoruz
 		student.setName(studentDTO.getFirstName());//ben burda setId yapmadigim icin id'yi degistiremez kullanici
 		student.setLastName(studentDTO.getLastName());
