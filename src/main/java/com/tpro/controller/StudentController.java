@@ -67,7 +67,7 @@ public class StudentController {
 	 
 	// Get All Students
 	@GetMapping //herhangi bir endpoint girmezsem yukardaki "/students" i alir(@RequestMapping'deki)
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')") //bu method'u sadece ADMIN'ler calistirsin
 	
 	/*
 	 Burda donen bir method girmem gerek.Bana bir request geldigi zaman client'e response olarak 
@@ -92,7 +92,7 @@ public class StudentController {
 	//Create new Student
 	@PostMapping ////herhangi bir endpoint girmezsem yukardaki "/students" i alir(@RequestMapping'deki)
 	//bir kisi "/student" endpoint'i ile get methodu'yla gelirse @GetMapping, post ile gelirse @PostMapping calisir
-	@PreAuthorize("hasRole('STUDENT')")
+	@PreAuthorize("hasRole('STUDENT')")//bu method'u sadece STUDENT'lar calistirsin
 	public ResponseEntity<Map<String, String>> createStudent(@Valid @RequestBody Student student){
 		//RequestBody:Bana gelen request'in body'sindeki data'yi(JSon) istiyorum demek
 		//@RequestBody Student student(@RequestBody calismasi):request'en gelen JSon'i bendeki student'a maple(ata),
@@ -110,7 +110,7 @@ public class StudentController {
 	@GetMapping("/query") //localhost:8080/students/1 benim istedigim id'yi endpoint'den cagirmak istersem
 	//endpoint'imde bir id ile @GetMapping geliyor, endpoint'inde gorunen yazdigimiz id ile database'e gidip,
 	//Student'i bulup on tarafa gonderiyoruz
-	
+	@PreAuthorize("hasRole('STUDENT') or hasRole('ADMIN')")//bu method'u hem ADMIN'ler hem STUDENT'lar calistirsin
 	public ResponseEntity<Student> getStudent(@RequestParam("id") Long id){
 		//(^)getStudent method'unun @RequestParam ile gelecegini soyluyorum
 		//@RequestParam:@GetMapping("/query") ile @RequestParam("id")'daki id'yi map'ler
@@ -125,11 +125,13 @@ public class StudentController {
 		
 	}
 	
+	
 	//Get a Student by ID by PathVariable(tek bir sey istedigimde PathVariable kullanirim)
+	
 	//Postman uzerinde sorgulama yapilirken @PathVariable ile birden fazla deger alinabilir.
 	//DB uzerinden bir tane veri cekmek isteniyorsa @PathVariable kullanilir.
-	
 	@GetMapping("/{id}")
+	@PreAuthorize("hasRole('STUDENT') or hasRole('ADMIN')")
 	public ResponseEntity<Student> getStudentWithPath(@PathVariable("id") Long id){//calisma prensibi param gibi
 	
 		Student student =studentService.findStudent(id); 
