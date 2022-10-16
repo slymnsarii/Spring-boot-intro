@@ -1,7 +1,10 @@
 package com.tpro.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,9 +19,13 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration //Configuration yapacagimi soyluyorum, bu class'im configuration class'i diyorum
 @EnableWebSecurity //WebSecurity'imi enable hale getir diyorum
-@EnableGlobalMethodSecurity(prePostEnabled = true) //security'm method method guvenligi saglayip calissin istiyorsam(yani su method'lari admin'ler su method'lari student'lar yapsin gibi)
+@EnableGlobalMethodSecurity(prePostEnabled = true) //security'm method method guvenligi saglayip calissin istiyorsam(yani su method
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 
+	//Server katmaniyla irtibata gecmek icin(UserDetailsService'i enjekte ettik)
+	@Autowired
+	private UserDetailsService userDetailsService;
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception { //bu method WebSecurityConfigurerAdapter'den geliyor
 //dinamik bir web sayfasi yapmayacaksak,csrf'i disable yapmamiz lazim, cunku put methodlarini error verdiriyor
@@ -38,6 +45,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 		//(^)Basic:her requestim'de kullanici adi ve sifre ile gelicem ve sifremi hep endcode etmem lazim
 		
 	}
+	
+	//InMemory'den kurtarmak icin yoruma aldik burayi
+	/*
+	
+	
 	
 	//InMemory olarak user'lari olusturuyoruz
 //(^) gecici objeler, herhangi bir yere kaydolmuyor, herhangi bir DB'ye ihtiyac duymayan programla beraber ayaga kalkan,durdugu anda duran
@@ -66,9 +78,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 		//burada parametreli constructor donduruyorum
 	}
 	
+	 */
+	
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.authenticationProvider(authProvider());
+	}
+	
 	@Bean
 	public PasswordEncoder passwordEncoder() { //sifreyi encoder etmesi icin PasswordEncoder method'unu kullaniyoruz
 		return new BCryptPasswordEncoder(10); //10 defa encode etsin
+	}
+	
+	@Bean
+	public DaoAuthenticationProvider authProvider() { //DaoAuthenticationProvider Provider'in child'i gibi
+		DaoAuthenticationProvider authProvider=new DaoAuthenticationProvider();
+		//kullanici bilgilerini girecegim
+		authProvider.setUserDetailsService(userDetailsService);//username+(encode)password geldi
+		//kullanilacak encoder-decoder method'u belirliyoruz
+		authProvider.setPasswordEncoder(passwordEncoder());
+		return authProvider;
 	}
 	
 	

@@ -9,7 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -17,6 +19,7 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
+import com.tpro.enums.userRole;
 
 import io.micrometer.core.lang.Nullable;
 import lombok.AllArgsConstructor;
@@ -81,5 +84,8 @@ public class Student {
 	private List<Book>books=new ArrayList<>(); //bir student'in birden fazla kitabi olacagi icin 
 					 //collection kullaniyoruz(books isminde list data turunde bir degisken olusturuyoruz)
 	
+	@OneToOne
+	@JoinColumn(name = "user_id")
+	private User user;//User class'i ile iliski kurmak icin
 	
 }
