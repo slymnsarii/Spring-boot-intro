@@ -19,7 +19,7 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
-import com.tpro.enums.userRole;
+import com.tpro.domain.enums.userRole;
 
 import io.micrometer.core.lang.Nullable;
 import lombok.AllArgsConstructor;

@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.tpro.enums.userRole;
+import com.tpro.domain.enums.userRole;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

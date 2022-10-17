@@ -1,4 +1,4 @@
-package com.tpro.enums;
+package com.tpro.domain.enums;
 
 public enum userRole {
 	
