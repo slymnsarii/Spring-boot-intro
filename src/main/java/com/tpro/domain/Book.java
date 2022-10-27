@@ -34,7 +34,7 @@ public class Book {
 	
 	//bir student'in birden fazla kitabi olsun istiyorum yani many-->book, one-->student tarafinda olur
 	@ManyToOne//bir student'in birden fazla kitabi olsun istiyorsam
-	@JoinColumn(name="student_id")
+	@JoinColumn(name="student_id") //buraya student_id tablo'sunu olusturun diyoruz
 	//(^)joinColumn ici foregin key oluyordu, o yuzden diger tarafta student_id ile iliskilendiriyoruz
 	//student_id bilgisi asagidaki student'a set ediyoruz
 	private Student student; //bu class'i student objesi ile iliskilendirmek icin(maplemek,birlestirmek)

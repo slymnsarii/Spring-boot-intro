@@ -80,7 +80,7 @@ public class Student {
 	//(^)JSON formatinda duzgun cikti gelsin istiyorsam time'i
 	private LocalDateTime createDate=LocalDateTime.now(); //islemin yapidigi anda yapilmasini istersem
 	
-	@OneToMany(mappedBy = "student")
+	@OneToMany(mappedBy = "student") //mapped by ile buraya student tablo'sunu olusturma dedik
 	private List<Book>books=new ArrayList<>(); //bir student'in birden fazla kitabi olacagi icin 
 					 //collection kullaniyoruz(books isminde list data turunde bir degisken olusturuyoruz)
 	

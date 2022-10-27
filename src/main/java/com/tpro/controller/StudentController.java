@@ -40,6 +40,7 @@ public class StudentController {
 	//hangi seviyede logglama yapmak istedigimizi biz belirtiyoruz
 	//(Trace, debug, info, warn, error, fatal)logglamayi info yaparsan info ve yukarisini logglar
 	Logger logger = LoggerFactory.getLogger(StudentController.class); //LoggerFactory:logger ureten fabrika
+		
 
 	@Autowired //suanda StudentService turunde studentService adinda bir obje bean olarak 
 	//olusturulmaya aday olarak IOC containerinda duruyor, ben bunu istedigim anda(ihtiyac duydugum anda) 
@@ -97,7 +98,7 @@ public class StudentController {
 		//RequestBody:Bana gelen request'in body'sindeki data'yi(JSon) istiyorum demek
 		//@RequestBody Student student(@RequestBody calismasi):request'en gelen JSon'i bendeki student'a maple(ata),
 		//Boylece Student'a JSon'i POJO class'ina eklemis oluyorum
-		//@Valid:request'ten gelen JSon'in bendeki Student POJO'mo uyuyor mu diye bakiyor
+		//@Valid:request'ten gelen JSon'in bendeki Student POJO'mo uyuyor mu diye bakiyor(bu ogrencinin bilgilerini kontrol et(@Notnull vs.))
 		studentService.createStudent(student); //service'e gondermek icin
 		Map<String, String> map =new HashMap<>();
 		map.put("message","Student is created succesfuly");
@@ -107,7 +108,7 @@ public class StudentController {
 	}
 	
 	//Get a Student by ID by RequestParam
-	@GetMapping("/query") //localhost:8080/students/1 benim istedigim id'yi endpoint'den cagirmak istersem
+	@GetMapping("/query") //localhost:8080/students/query?id=1 benim istedigim id'yi endpoint'den cagirmak istersem
 	//endpoint'imde bir id ile @GetMapping geliyor, endpoint'inde gorunen yazdigimiz id ile database'e gidip,
 	//Student'i bulup on tarafa gonderiyoruz
 	@PreAuthorize("hasRole('STUDENT') or hasRole('ADMIN')")//bu method'u hem ADMIN'ler hem STUDENT'lar calistirsin
@@ -130,7 +131,7 @@ public class StudentController {
 	
 	//Postman uzerinde sorgulama yapilirken @PathVariable ile birden fazla deger alinabilir.
 	//DB uzerinden bir tane veri cekmek isteniyorsa @PathVariable kullanilir.
-	@GetMapping("/{id}")
+	@GetMapping("/{id}") //localhost:8080/students/1
 	@PreAuthorize("hasRole('STUDENT') or hasRole('ADMIN')")
 	public ResponseEntity<Student> getStudentWithPath(@PathVariable("id") Long id){//calisma prensibi param gibi
 	
@@ -173,7 +174,7 @@ public class StudentController {
 		//studentService katmanindan getAllWithPage method'unu cagriyorum, icerisine arguman olarak
 //yukarida olusturdugum pageable objesini atiyorum, pageable icerisinde yukarda olusturdugum kisitlamalar var
 		//Bu ozelliklerle studentService katmanindan bir sey istiyorsam buna karsilik olarak POJO class'i
-		//student oldugu icin student'tan gelecek ama list formatinda gelmemesi lazim cunku pageabla atiyorum
+		//student oldugu icin student'tan gelecek ama list formatinda[] köseli parantez olarak gelmemesi lazim cunku pageabla atiyorum
 		//Dolayisiyla donen yapi Page generic yapisinda icerisinde Student olan objelerin oldugu yapi gelecek
 		
 //Client(on taraf, frontend) side pageable:Server'dan butun datalari client'e gonderme(cok mantikli degil)
@@ -198,7 +199,7 @@ public class StudentController {
 	}
 	
 	//GetAllstudentsBygrade(JPQL)
-	@GetMapping("/grade/{grade}") //@PathVariable dedigim icin {grade} yazdim
+	@GetMapping("/grade/{grade}") //localhost:8080/students/grade/60 //@PathVariable dedigim icin {grade} yazdim
 	public ResponseEntity<List<Student>>getStudentsEqualsGrade(@PathVariable("grade")Integer grade){
 													//(^)burdaki grade Getmapping icindeki {grade}'den geliyor
 											  //POJO class'imdaki grade integer old. icin Integer'a mapp'liyoruz
