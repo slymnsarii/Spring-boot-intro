@@ -54,12 +54,12 @@ public class Student {
 	//int olarak tanimlasaydik default olarak 0 degeri verecekti ve ikinci bir id girdigimde sıkıntı olurdu
 	//private int id; //0 --id vermezsen 0 atar ve exception firlatir
 	
-	@NotNull(message = "first name can not be null") // null deger olmasini istemiyorsam
-	@NotBlank(message = "last name can not be white space") //bosluk karakteri girmesin diye
-	@Size(min = 2,max = 25, message = "First name '${validatedValue}' must be between{min} and {max} long")
+	@NotNull(message = "first name can not be null") // null deger olmasini istemiyorsam (API'deki validation controlu)
+	@NotBlank(message = "last name can not be white space") //bosluk karakteri girmesin diye (API'deki validation controlu)
+	@Size(min = 2,max = 25, message = "First name '${validatedValue}' must be between{min} and {max} long") //(API'deki validation controlu)
 	//${validatedValue}' ibaresi kullanicinin girmis oldugu degeri buraya getiriyor
 	@Column(nullable = false, length=25)//@Column:kullandigimiz field'lerin tabloda bir column'a denk gelmesini istiyorsam
-	//nullable kullanıcı name'e illa bir seyler girsin diye, lenth de en fazla girecegi karakter
+	//nullable kullanıcı name'e illa bir seyler girsin diye, lenth de en fazla girecegi karakter(hibernate controlu)
 	private String name;
 	
 	@Column(nullable = false, length=25)
@@ -69,7 +69,7 @@ public class Student {
 	private Integer grade;
 	
 	@Column(nullable = false, length=50, unique = true) //unique olmasi ayni email'lerin girilmesini onlemek
-	@Email(message = "Provide valid email") //email'in belli ozelliklerde olmasini istiyorsam ve 
+	@Email(message = "Provide valid email") //email'in belli ozelliklerde olmasini istiyorsam ve   (API'deki validation controlu)
 											//yanlis degerde email girerse bir mesaj vermek icin
 	private String email;
 	
