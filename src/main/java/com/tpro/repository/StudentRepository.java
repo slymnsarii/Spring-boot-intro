@@ -15,9 +15,20 @@ import com.tpro.dto.StudentDTO;
 //onu da JpaRepository kutuphanesinden yapiyorum boylece SQL kodlari yazmama gerek kalmayacak
 //Ancak JpaRepository'de olmayan ozel bir query yapacaksam o zaman burda SQL query kodunu yazacagim
 
-@Repository
+@Repository //Component islemlerini de bu yapar
 public interface StudentRepository extends JpaRepository<Student, Long>{
 	//T(ilk):POJO class'in ismi, ID(ikinci):POJO class'indaki ID'yi hangi data turu ile set ettim onu istiyor
+	/*
+	 JpaRepository icinde olan method'lar:
+	 1-findAll():DB'deki butun ogrencileri getirmek icin
+	 2-findAllById():id ile ilgili bir sey istiyorsam bu method'u kullanirim
+	 3-findAll(Sort sort):stundet'lari parca parca cekmek icin (JpaRepository extends PagingAndSortingRepository)
+	 4-save():kaydetme(CRUD) (PagingAndSortingRepository extends CrudRepository)
+	 5-findById():herhangi bir student'i id ile isteme (PagingAndSortingRepository extends CrudRepository)
+	 6-existById(ID id): bu id'li student DB'de var mi (PagingAndSortingRepository extends CrudRepository)
+	 7-count():bu ozellikte kac tane student var DB'de (PagingAndSortingRepository extends CrudRepository)
+	 8-deleteById(ID id):bu id'li student'i sil (PagingAndSortingRepository extends CrudRepository)
+	 */
 	
 	boolean existsByEmail(String email); 
 	//Spring Data JPA icinde existById() var fakat Spring Data JPA bize sondaki eki istedigimiz degisken ismi ile

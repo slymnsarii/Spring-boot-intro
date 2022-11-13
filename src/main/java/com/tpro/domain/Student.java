@@ -55,7 +55,7 @@ public class Student {
 	//private int id; //0 --id vermezsen 0 atar ve exception firlatir
 	
 	@NotNull(message = "first name can not be null") // null deger olmasini istemiyorsam (API'deki validation controlu)
-	@NotBlank(message = "last name can not be white space") //bosluk karakteri girmesin diye (API'deki validation controlu)
+	@NotBlank(message = "last name can not be white space") //bosluk karakteri girmesin diye, sadece String'ler kullanir (API'deki validation controlu)
 	@Size(min = 2,max = 25, message = "First name '${validatedValue}' must be between{min} and {max} long") //(API'deki validation controlu)
 	//${validatedValue}' ibaresi kullanicinin girmis oldugu degeri buraya getiriyor
 	@Column(nullable = false, length=25)//@Column:kullandigimiz field'lerin tabloda bir column'a denk gelmesini istiyorsam
@@ -78,7 +78,7 @@ public class Student {
 	
 	@JsonFormat(shape= JsonFormat.Shape.STRING, pattern="MM/dd/yyyy HH:mm:ss", timezone="Turkey")
 	//(^)JSON formatinda duzgun cikti gelsin istiyorsam time'i
-	private LocalDateTime createDate=LocalDateTime.now(); //islemin yapidigi anda yapilmasini istersem
+	private LocalDateTime createDate=LocalDateTime.now(); //islemin yapildigi anda yapilmasini istersem
 	
 	@OneToMany(mappedBy = "student") //mapped by ile buraya student tablo'sunu olusturma dedik
 	private List<Book>books=new ArrayList<>(); //bir student'in birden fazla kitabi olacagi icin 

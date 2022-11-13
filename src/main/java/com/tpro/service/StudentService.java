@@ -17,7 +17,7 @@ import com.tpro.exception.ConflictException;
 import com.tpro.exception.ResourceNotFoundException;
 import com.tpro.repository.StudentRepository;
 
-@Service
+@Service //Component islemlerini de yapar
 public class StudentService {
 	
 	@Autowired //enjekte edilmesi icin
@@ -41,22 +41,32 @@ public class StudentService {
 			//burda(^) ConflictException class'indaki message yerine gidecek olan mesaj
 			
 		}
-		studentRepository.save(student); //repository'e gonderiyorum(save method'u JPA'dan geldi)
+		studentRepository.save(student); //repository'e gonderiyorum(save method'u Spring Data JPA'dan geldi)
 	}
 	//find Student By ID
 	public Student findStudent(Long id) {//bu method optional'dir senin bunu mutlaka handle etmen lazim
 		//istedigi id database'de var mi?varsa gonderecek yoksa exception firlatir
-		return studentRepository.findById(id).
-				orElseThrow(()->new ResourceNotFoundException("Student not found with id : "+id)); 
+		return studentRepository.findById(id). //findById:hazir method, bu method icin repo'da sql kodu yazmana gerek yok
+				orElseThrow(()->new ResourceNotFoundException("Student not found with id : "+id)); //super'in icindeki message
 	//orElseThrow:boyle bir id yoksa exception firlat
 		
 //(^)studentRepository'ne git, findById method'unu cagir, (id) ile tarama yap, varsa dondur(return) yoksa
 //orElseThrow'a git exception'i firlat mesaji gonder
 	}
-
+	
+	//delete
 	public void deleteStudent(Long id) {
 		Student student =findStudent(id);
-		studentRepository.delete(student);
+		studentRepository.delete(student); //hazir kod(.delete)
+		
+		/*OR(controller'daki yorumdaki gibi yazarsan)
+		 public Student deleteStudent(Long id) {
+		Student student=findStudent(id);
+		 studentRepository.delete(student);
+		 return student;
+	}
+
+		 */
 	}
 
 	//update student

@@ -42,7 +42,7 @@ public class StudentController {
 	Logger logger = LoggerFactory.getLogger(StudentController.class); //LoggerFactory:logger ureten fabrika
 		
 
-	@Autowired //suanda StudentService turunde studentService adinda bir obje bean olarak 
+	@Autowired //@Autowired new'leme yapmadan obje olusturuyor; suanda StudentService turunde studentService adinda bir obje bean olarak 
 	//olusturulmaya aday olarak IOC containerinda duruyor, ben bunu istedigim anda(ihtiyac duydugum anda) 
 	//Singleton Dizayn Pantern'e giderek bir tane ureterek bana verecek
 	//(@Autowired annotation ile dependency injection yapmış oluyoruz, IOC containerda bulunan 
@@ -52,7 +52,7 @@ public class StudentController {
 	/* logger icin yoruma aldim
 	@GetMapping("/welcome") //localhost:8080/students/welcome 
 							//(bana bu endpointle gelirsen bu asagidaki method'u calistir) //Get bilgi ister
-	public String welcome() {
+	public String welcome() { //bean (obje) olusturduk
 		return "Welcome to Student Controller";
 	}
 	
@@ -99,7 +99,7 @@ public class StudentController {
 		//@RequestBody Student student(@RequestBody calismasi):request'en gelen JSon'i bendeki student'a maple(ata),
 		//Boylece Student'a JSon'i POJO class'ina eklemis oluyorum
 		//@Valid:request'ten gelen JSon'in bendeki Student POJO'mo uyuyor mu diye bakiyor(bu ogrencinin bilgilerini kontrol et(@Notnull vs.))
-		studentService.createStudent(student); //service'e gondermek icin
+		studentService.createStudent(student); //service'e gondermek icin, icine student yazdik cunku create edilebilmesi icin POJO class'i lazim
 		Map<String, String> map =new HashMap<>();
 		map.put("message","Student is created succesfuly");
 		map.put("status","true"); //test olarak duzgun olarak olustu demek(kullaniciya mesaj)
@@ -147,6 +147,15 @@ public class StudentController {
 		map.put("message","Student is deleted succesfuly");
 		map.put("status","true"); //test olarak duzgun olarak olustu demek(kullaniciya mesaj)
 		return new ResponseEntity<>(map,HttpStatus.OK);
+		
+		/*OR
+		 @DeleteMapping("/{id}")
+	public ResponseEntity<Student> deleteStudents(@PathVariable("id")Long id){
+		Student student=studentService.deleteStudent(id);
+		return ResponseEntity.ok(student);
+	}
+		 */
+		
 	}
 	
 	//Update Student, DTO kulllanilacak
