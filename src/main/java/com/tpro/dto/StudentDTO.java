@@ -19,6 +19,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+//@Entity -->Entity'i DTO'da eklemiyoruz çünkü o Hibernate icin ve burda gerek yok
 public class StudentDTO {
 	//DTO kullanma sebebim; 1)hız 2)guvenlik(id, email vs kullanicinin degistirmemesi icin)
 	

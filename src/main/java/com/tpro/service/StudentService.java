@@ -17,10 +17,11 @@ import com.tpro.exception.ConflictException;
 import com.tpro.exception.ResourceNotFoundException;
 import com.tpro.repository.StudentRepository;
 
+//logic islemler service katmaninda yapilir
 @Service //Component islemlerini de yapar
 public class StudentService {
 	
-	@Autowired //enjekte edilmesi icin
+	@Autowired //enjekte edilmesi icin Servisi Repo'ya
 	private StudentRepository studentRepository; //bunu yazarak service katmani repo'ya gidip ordan bir sey isteyecek 
 
 	public List<Student> getAll() {
@@ -34,6 +35,7 @@ public class StudentService {
 	//create student
 	public void createStudent(Student student) {
 		if (studentRepository.existsByEmail(student.getEmail())) {
+			//benim pojo class'ımdan gelen öğrencinin email bilgisi repository'mde var mı diye kontrol etmem lazım
 			//kullanicinin girdigi email bilgisi benim database'imde var mi diye kontrol etmem lazim
 			//email ile unique gelmesini istedigim icin existByEmail yaptik
 			//burada exception eklenecek(handle)

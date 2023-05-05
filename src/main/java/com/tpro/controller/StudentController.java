@@ -32,7 +32,7 @@ import com.tpro.service.StudentService;
 //controller'in isi request'den gelen istekleri  service'e gondermek
 //controller katmaninda logic islemler yapamayiz, logic islemler service katmaninda yapilir
 @RestController //proje RestFullAPI(Rest mimari ile uretildigi icin) oldugu icin
-@RequestMapping("/students") //gelen requestleri "/students" ile maple
+@RequestMapping("/students") //gelen requestleri "/students" ile maple(hangi endpointle geliceğimi @RequestMapping ile maple)
 public class StudentController {
 	//kullanicinin aldigi hatayi log dosyasina gidip hangi saat'te aldigina bakip ona gore sorunu cozuyoruz
 	//logglamayi hangi method'da istiyorsam o method'un class'inda yapiyorum
@@ -47,7 +47,7 @@ public class StudentController {
 	//Singleton Dizayn Pantern'e giderek bir tane ureterek bana verecek
 	//(@Autowired annotation ile dependency injection yapmış oluyoruz, IOC containerda bulunan 
 	//StudentService data türündeki objeyi new keywordunu kullanmadan uygulama içinde kullanmamı sağlıyor)
-	private StudentService studentService;
+	private StudentService studentService; //Field injection
 	
 	/* logger icin yoruma aldim
 	@GetMapping("/welcome") //localhost:8080/students/welcome 
@@ -59,7 +59,7 @@ public class StudentController {
 	logglama icin asagiya yaptim aynisini
 	*/
 	
-	@GetMapping("/welcome")
+	@GetMapping("/welcome") //localhost:8080/students/welcome
 	public String welcome(HttpServletRequest request) {//HttpServletRequest:requestlere ulasmak icin
 		
 		logger.warn("-----------Welcome{}",request.getServletPath());
@@ -73,7 +73,7 @@ public class StudentController {
 	/*
 	 Burda donen bir method girmem gerek.Bana bir request geldigi zaman client'e response olarak 
 	 https status kodunu gondermem lazim(200,300..) ve kullaniciya bir mesaj gondermem lazim(kullanicin istedigi bilgiler)
-	 Bunun icin Springboot'da ResponseEntity diye bir yapi var.
+	 Bunun icin Springboot'da ResponseEntity diye bir yapi var.ResponseEntity 2 tane field alır.1)message 2)HTTP status
 	 Controller kisminda yazdigimiz method'larin hemen hemen hepsinde ResponseEntity yapisini kullaniriz.
 	 ResponseEntity diamond operatoru ile calisir
 	 
@@ -82,8 +82,20 @@ public class StudentController {
 		List<Student> students = studentService.getAll(); // kullaniyoruz(List)
 		//(^)Controller service'e gidecegi icin, gitmesini de @Autowired ile service'e injekte ederek yaparak gidecegiz
 		//burda map<> de donebiliriz ama projelerin %90'inda ResponseEntity kullanilir
+		/*
+		 ResponseEntity: Spring Framework'te web uygulamaları oluştururken HTTP yanıtı göndermek için kullanılan bir sınıftır. 
+		 ResponseEntity sınıfı, HTTP yanıtı için farklı durum kodları, 
+		 yanıt gövdesi ve yanıt başlıkları gibi farklı parametreleri ayarlayabilme imkanı sağlar.
+
+ResponseEntity sınıfı, birçok durumda kullanılabilir. Örneğin, bir HTTP isteği aldığınızda, veritabanından bir nesne alıp
+ bu nesneyi JSON veya XML formatında dönüştürüp yanıt olarak göndermek isteyebilirsiniz.
+  ResponseEntity sınıfı, yanıtın başarılı veya başarısız olduğunu gösteren durum kodlarını ayarlamak, 
+  yanıt gövdesi ve başlıklarını belirlemek için kullanılabilir.
+
+Bu nedenle ResponseEntity sınıfı, web uygulamaları için oldukça yararlıdır ve birçok senaryoda kullanılabilir.
+		 */
 		//getAll() method'undan bana exception gelecek mi kontrolunu service'de kontrol ediyoruz
-		return ResponseEntity.ok(students); 
+		return ResponseEntity.ok(students); //ResponseEntity.ok : HTTP statusunu 200 olarak gönder
 	}
 	//ayni endpoint'e ayni mapping ile gelemezsiniz yani bi daha alta default endpoint icin @GetMapping yazamazsin
 	//cunku endpoint ile method ayni olur ve karisir sistem
@@ -91,18 +103,18 @@ public class StudentController {
 	//endpoint'i postman'da test edemeyiz cunku db bos, o yuzden test edebilmek icin create method'u olusturuyoruz
 	
 	//Create new Student
-	@PostMapping ////herhangi bir endpoint girmezsem yukardaki "/students" i alir(@RequestMapping'deki)
+	@PostMapping //herhangi bir endpoint girmezsem yukardaki "/students" i alir(@RequestMapping'deki)
 	//bir kisi "/student" endpoint'i ile get methodu'yla gelirse @GetMapping, post ile gelirse @PostMapping calisir
 	@PreAuthorize("hasRole('STUDENT')")//bu method'u sadece STUDENT'lar calistirsin
 	public ResponseEntity<Map<String, String>> createStudent(@Valid @RequestBody Student student){
 		//RequestBody:Bana gelen request'in body'sindeki data'yi(JSon) istiyorum demek
 		//@RequestBody Student student(@RequestBody calismasi):request'en gelen JSon'i bendeki student'a maple(ata),
 		//Boylece Student'a JSon'i POJO class'ina eklemis oluyorum
-		//@Valid:request'ten gelen JSon'in bendeki Student POJO'mo uyuyor mu diye bakiyor(bu ogrencinin bilgilerini kontrol et(@Notnull vs.))
+		//@Valid:@Requestbody'den gelen JSon'in bendeki Student POJO'mo uyuyor mu diye bakiyor(bu ogrencinin bilgilerini kontrol et(@Notnull vs.))
 		studentService.createStudent(student); //service'e gondermek icin, icine student yazdik cunku create edilebilmesi icin POJO class'i lazim
-		Map<String, String> map =new HashMap<>();
-		map.put("message","Student is created succesfuly");
-		map.put("status","true"); //test olarak duzgun olarak olustu demek(kullaniciya mesaj)
+		Map<String, String> map =new HashMap<>(); //HashMap data türünde map isminde bir değişken oluşturduk
+		map.put("message","Student is created succesfuly"); //ilki key, ikincisi value
+		map.put("status","true"); //task olarak duzgun olarak olustu demek(kullaniciya mesaj)
 		return new ResponseEntity<>(map,HttpStatus.CREATED);
 		
 	}

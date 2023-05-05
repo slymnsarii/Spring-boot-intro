@@ -12,7 +12,7 @@ import com.tpro.domain.Student;
 import com.tpro.dto.StudentDTO;
 
 //repository database ile iletisime gecer, yani SQL datalarimi(query'lerimi) burda yazmam lazim,
-//onu da JpaRepository kutuphanesinden yapiyorum boylece SQL kodlari yazmama gerek kalmayacak
+//onu da JpaRepository kutuphanesinden yapiyorum(CRUD operasyonlarını yazmama gerek yok) boylece SQL kodlari yazmama gerek kalmayacak
 //Ancak JpaRepository'de olmayan ozel bir query yapacaksam o zaman burda SQL query kodunu yazacagim
 
 @Repository //Component islemlerini de bu yapar
@@ -23,16 +23,16 @@ public interface StudentRepository extends JpaRepository<Student, Long>{
 	 1-findAll():DB'deki butun ogrencileri getirmek icin
 	 2-findAllById():id ile ilgili bir sey istiyorsam bu method'u kullanirim
 	 3-findAll(Sort sort):stundet'lari parca parca cekmek icin (JpaRepository extends PagingAndSortingRepository)
-	 4-save():kaydetme(CRUD) (PagingAndSortingRepository extends CrudRepository)
+	 4-save():kaydetme(CRUD-create) (PagingAndSortingRepository extends CrudRepository)
 	 5-findById():herhangi bir student'i id ile isteme (PagingAndSortingRepository extends CrudRepository)
 	 6-existById(ID id): bu id'li student DB'de var mi (PagingAndSortingRepository extends CrudRepository)
 	 7-count():bu ozellikte kac tane student var DB'de (PagingAndSortingRepository extends CrudRepository)
 	 8-deleteById(ID id):bu id'li student'i sil (PagingAndSortingRepository extends CrudRepository)
 	 */
 	
-	boolean existsByEmail(String email); 
+	boolean existsByEmail(String email); //database'den talep ediyorum email'i
 	//Spring Data JPA icinde existById() var fakat Spring Data JPA bize sondaki eki istedigimiz degisken ismi ile
-	//degistirmemize izin veriyor(ByEmail, ByGreade..), mevcut method'u bu sekilde turetebiliyoruz.
+	//degistirmemize izin veriyor(ByEmail, ByGreade..), mevcut method'u bu sekilde turetebiliyoruz.Ama existsBy ile başlayacaksın
 
 	List<Student> findByLastName(String lastName);//findBy turetilebilir bir method oldugu icin arka planda 
 	//parametre olan argument olarak ekledigim lastName'i aliyor DB'den gidip ordan alip getiriyor
@@ -59,7 +59,20 @@ public interface StudentRepository extends JpaRepository<Student, Long>{
 	//(^)Eger repo'dan gelen student'i DTO'ya cevirmek istersem findStudentDTOById method'unu her yerde kullanirim
 		//Optional: ya gelmezse ya olmazsa anlaminda orElseThrow'dan dolayi	
 	
-		
+		/*
+		 Native Query, doğrudan veritabanı tarafından desteklenen SQL sorgularıdır.
+		  Bu, veritabanına özgü işlevlerin kullanılmasına izin verir.
+		   Native Query, JPQL'ye göre daha hızlıdır, ancak portatif değildir,
+		    yani farklı veritabanları için ayrı sorgular yazmanız gerekebilir.
+
+JPQL (Java Persistence Query Language), Java sınıflarını veritabanı tablolarıyla ilişkilendirmek için kullanılan bir sorgu dilidir.
+ JPQL, veritabanına bağımlı olmayan bir yapı sunar, yani aynı sorgu, farklı veritabanları üzerinde çalışabilir.
+  Ayrıca, JPQL, veri güvenliğini artıran sorgu derleme aşamasında parametre bağlama özelliğine de sahiptir.
+
+Genel olarak, JPQL, portatiflik, veri güvenliği ve ORM (Object-Relational Mapping) çerçeveleriyle daha iyi entegrasyon sağlamak için
+ kullanılabilirken, Native Query, performansı artırmak veya veritabanı özgü işlevler kullanmak için kullanılabilir.
+  Ancak, her iki yaklaşımın da uygun kullanım senaryoları vardır ve uygulama gereksinimlerinize göre karar vermeniz gerekebilir.
+		 */
 		
 }
 
